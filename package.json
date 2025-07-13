@@ -1,7 +1,7 @@
 {
   "name": "fluent-state",
   "version": "1.0.0",
-  "description": "A fluent, immutable, deeply reactive local state management tool for React",
+  "description": "Fluent, immutable, deeply reactive state for React — powered by Proxies and fine-grained tracking",
   "type": "module",
   "main": "./dist/index.esm.js",
   "module": "./dist/index.esm.js",
@@ -16,10 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "clean": "rm -rf dist",
-    "release": "npm version patch && npm run build && git push && git push --tags && npm publish",
-    "prepublishOnly": "npm run clean && npm run build"
+    "build": "npm run clean && rollup -c",
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "react",
@@ -31,7 +29,7 @@
     "state-management",
     "react-hook"
   ],
-  "author": "M. Bos",
+  "author": "Marcel Bos",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=17.0.0"
@@ -46,7 +44,8 @@
     "react-dom": "^19.1.0",
     "rollup": "^4.0.0",
     "rollup-plugin-dts": "^6.1.0",
-    "typescript": "^5.0.0"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "tslib": "^2.8.1"

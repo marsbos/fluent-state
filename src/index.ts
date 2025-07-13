@@ -1,2 +1,2 @@
-export * from "./fluentState/FluentProxy";
-export * from "./fluentState/useFluentState";
+export * from "./FluentProxy";
+export * from "./useFluentState";
