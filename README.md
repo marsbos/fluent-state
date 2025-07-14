@@ -1,9 +1,18 @@
 # fluent-state
 
-> **Fluent. Immutable. React state that just makes sense.**  
-> Nested, reactive state with zero boilerplate and automatic effect tracking — no signals, no reducers, no headaches.
+> Fluent. Immutable. React state that just makes sense.
+
+Nested, reactive state with zero boilerplate and automatic effect tracking — no signals, no reducers, no headaches.  
+Built on lightweight, cached JavaScript proxies — not over your state, but over tiny getter/setter functions.  
+Each field is a reusable proxy function: `state.user.settings.theme('Dark')`.  
+Fast, intuitive, and 100% plain React — no wrappers, no compiler, no nonsense.
 
 ---
+
+<br/>
+
+🚀 **Try the live demo on CodeSandbox:**<br/>
+👉 [Demo: Fluent Todo App](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
 
 ## 🧠 Why I built fluent-state
 
@@ -167,6 +176,7 @@ Your effects re-run only when the _actual values you use_ change.
 
 - ✅ Fully working effect system
 - ✅ Nested array/object support
+- ⏳ Derived/computed state
 - ⏳ Persist plugin
 - ⏳ Devtools
 - ⏳ Global/shared state opt-in
