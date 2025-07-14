@@ -172,6 +172,36 @@ Your effects re-run only when the _actual values you use_ change.
 
 ---
 
+## 🚦 Best Practices for `useFluentState`
+
+- **Always use the getter function to read state:**  
+  Use `state.someValue()` instead of directly accessing properties. This ensures dependency tracking works correctly.
+
+- **Update state using the setter function:**  
+  Use `state.someValue(newValue)` or `state.someValue(prev => newValue)` to update state immutably and trigger reactivity.
+
+- **Leverage the cached proxy functions:**  
+  You can safely assign nested proxies to variables (e.g. `const todos = state.user.todos;`) and use them directly. The proxies are cached and stable.
+
+- **Use effects for side effects and reacting to state changes:**  
+  Use the provided `effect` function to run code when tracked state changes. No need for manual dependency arrays.
+
+- **Keep state as plain JavaScript objects and arrays:**  
+  The proxy system wraps your data but underneath, you still work with familiar JS structures, making it easy to reason about your data.
+
+- **Avoid mutating state directly:**  
+  Always update state through the proxy setter to maintain immutability and React compatibility.
+
+- **Plan for derived state with upcoming compute feature:**  
+  Currently, use effects to update related state, but soon you can use `compute` for automatic cached derived values.
+
+- **Designed specifically for React:**  
+  `useFluentState` integrates seamlessly with React’s rendering lifecycle, avoiding unnecessary re-renders and making state updates efficient.
+
+---
+
+These practices help you get the most out of `useFluentState` while keeping your code clean, predictable, and performant.
+
 ## 📦 Roadmap
 
 - ✅ Fully working effect system
