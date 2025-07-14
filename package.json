@@ -1,6 +1,6 @@
 {
   "name": "fluent-state",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fluent, immutable, deeply reactive state for React — powered by Proxies and fine-grained tracking",
   "type": "module",
   "main": "./dist/index.esm.js",
