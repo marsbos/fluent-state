@@ -17,7 +17,8 @@
   ],
   "scripts": {
     "build": "npm run clean && rollup -c",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "release": "./release.sh"
   },
   "keywords": [
     "react",

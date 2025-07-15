@@ -1,51 +1,26 @@
 # fluent-state
 
-> Fluent. Immutable. React state that just makes sense.
+> Fluent, immutable React local state that just makes sense.
 
-Nested, reactive state with zero boilerplate and automatic effect tracking — no signals, no reducers, no headaches.  
-Built on lightweight, cached JavaScript proxies — not over your state, but over tiny getter/setter functions.  
-Each field is a reusable proxy function: `state.user.settings.theme('Dark')`.  
-Fast, intuitive, and 100% plain React — no wrappers, no compiler, no nonsense.
+A tiny (~2kb), proxy-based React hook for **deeply nested**, reactive state and **built-in effects** — zero boilerplate, no reducers, no magic.
 
 ---
 
-<br/>
+## 🚀 Installation
 
-🚀 **Try the live demo on CodeSandbox:**<br/>
-👉 [Demo: Fluent Todo App](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
+```bash
+npm install fluent-state
+```
 
-## 🧠 Why I built fluent-state
+Or with yarn:
 
-I was building a React app with deeply nested state. I wanted control and structure — but I didn’t want reducers, actions, or global stores. Just... a nice way to manage state.
-
-I tried:
-
-- **Redux** — too verbose, too much setup.
-- **Zustand** — nice, but not great with deeply nested data.
-- **MobX** — felt magical, unpredictable in team settings.
-- **Signals** — powerful, but unfamiliar and frameworky.
-
-I wanted something that:
-
-- Feels like **plain JavaScript** (getters/setters).
-- Updates **immutably** under the hood.
-- Tracks **dependencies automatically** — no more `useEffect([a, b, c])` nonsense.
-- Doesn’t rerun effects on every render unless something _actually_ changed.
-
-So I built it — with a little help from AI for some of the trickier TypeScript parts and complex logic. But the core concept, the API design, and the majority of the code are all mine.
-
-## ✨ Key features
-
-- ✅ **Fluent API** — access and update state with a simple `.()` function
-- 🔁 **Immutable updates** — always safe, always React-friendly
-- 🎯 **Auto-tracked effects** — no more manual dependency arrays
-- 🧩 **Fully nested** — works flawlessly with deep object trees and arrays
-- 🛡 **No magic** — no decorators, no proxies that break debugging, no class-based weirdness
-- 🧠 **Intuitive mental model** — you always know what’s going on
+```bash
+yarn add fluent-state
+```
 
 ---
 
-## 🚀 Quick example
+## ⚡ Quick Start
 
 ```tsx
 import { useFluentState } from "fluent-state";
@@ -66,13 +41,55 @@ function Counter() {
 }
 ```
 
-> ✅ Effects don’t rerun on re-render.  
-> ✅ Only when `.count()` value changes.  
-> ✅ No dependency array needed.
+[Try the live demo on CodeSandbox »](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
 
 ---
 
-## 🧪 Nested state? Bring it on
+## 💡 Why fluent-state?
+
+I built fluent-state because I wanted a React state hook that:
+
+- Replaces `useState`, `useReducer`, and `useEffect` with a single, fluent, and reactive API
+- Feels like plain JavaScript with getter/setter functions
+- Updates immutably and efficiently under the hood
+- Tracks dependencies automatically, no manual arrays
+- Handles deep nested objects and arrays naturally
+- Avoids magic, globals, or complex APIs
+
+---
+
+## ✨ Key Features
+
+- Fluent getter/setter API (`state.user.name("Alice")`)
+- Immutable updates, fully React compatible
+- Auto-tracked effects with zero boilerplate
+- Works flawlessly with nested objects and arrays
+- Tiny bundle size (~2kb)
+- Full TypeScript support with accurate typings
+
+---
+
+## ⚙️ How fluent-state uses Proxies (but don’t worry!)
+
+fluent-state uses JavaScript **Proxies** — but **not** to wrap your entire state object directly.
+
+Instead, it wraps tiny **getter/setter functions** that correspond to specific **paths** inside your state. These proxies:
+
+- Wrap just the accessors for each path, **completely separate from the actual state object**
+- Are **lightweight and cached** for excellent React performance
+- Have **no magic** — just normal JavaScript behavior
+
+This means:
+
+- You call fluent getter/setter functions like `state.user.name("Alice")`
+- Immutable updates happen internally without mutating the original state
+- Effects track which getter functions you use — no manual dependency arrays needed
+
+In short: fluent-state’s proxies wrap **functions representing paths**, not the state object itself — keeping everything simple, predictable, and reactive.
+
+---
+
+## 🧩 Nested State Example
 
 ```tsx
 const [state, effect] = useFluentState({
@@ -91,133 +108,123 @@ state.user.address.city("Rotterdam");
 state.user.hobbies((h) => [...h, "coding"]);
 ```
 
-Fluent access, fluent updates — even in arrays and deeply nested structures.
-
 ---
 
-## 🔁 Working with arrays
+## 🔍 Complex Example: Todo List with Nested State and Effects
 
 ```tsx
-const [state] = useFluentState({ items: ["apple", "banana"] });
+type Todo = {
+  id: number;
+  title: string;
+  done: boolean;
+};
 
-state.items((items) => [...items, "ananas"]);
+function TodoApp() {
+  const [state, effect] = useFluentState({
+    todos: [
+      { id: 1, title: "Learn fluent-state", done: false },
+      { id: 2, title: "Build awesome apps", done: false },
+    ],
+    filter: "all" as "all" | "done" | "active",
+  });
+
+  // Effect: Log when filtered todos change
+  effect(() => {
+    const visibleTodos = state.todos().filter((todo) => {
+      if (state.filter() === "done") return todo.done;
+      if (state.filter() === "active") return !todo.done;
+      return true;
+    });
+    console.log("Visible todos:", visibleTodos);
+  });
+
+  // Toggle todo done state
+  function toggleDone(id: number) {
+    state.todos((todos) =>
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo
+      )
+    );
+  }
+
+  // Change filter
+  function setFilter(value: "all" | "done" | "active") {
+    state.filter(value);
+  }
+
+  return (
+    <>
+      <h2>Todos</h2>
+      <div>
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("active")}>Active</button>
+        <button onClick={() => setFilter("done")}>Done</button>
+      </div>
+      <ul>
+        {state.todos().map((todo) => (
+          <li key={todo.id}>
+            <label>
+              <input
+                type="checkbox"
+                checked={todo.done}
+                onChange={() => toggleDone(todo.id)}
+              />
+              {todo.title}
+            </label>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
 ```
 
----
-
-## 🥊 Compared to other tools
-
-| Feature / Tool          | fluent-state    | Redux        | Zustand | MobX         | Signals (React) |
-| ----------------------- | --------------- | ------------ | ------- | ------------ | --------------- |
-| ✅ Fluent API           | Yes             | No           | Partial | Yes          | Yes             |
-| ✅ Immutable updates    | Yes (automatic) | Yes (manual) | Yes     | No (mutable) | Yes             |
-| ✅ Auto effect tracking | Yes             | No           | No      | Yes          | Yes             |
-| ✅ Handles deep state   | Yes             | Complex      | Limited | Yes          | Yes             |
-| ✅ Predictable          | Yes             | Yes          | Yes     | Sometimes    | Mostly          |
-| ✅ React integration    | Full            | Full         | Full    | Full         | Beta            |
-| ✅ Lightweight          | ~2kb core       | Heavy        | Medium  | Medium-heavy | Medium          |
+This example shows how `useFluentState` manages deeply nested arrays and objects with a fluent, immutable API, while effects automatically track dependencies and run only when needed.
 
 ---
 
-## 🧘 Philosophy
+## ❓ FAQ
 
-**No magic. No globals. No fragile reactivity.**
+**Q: Why do I need to call state fields as functions like `state.user.name()`?**  
+A: This getter function pattern allows automatic dependency tracking and controlled immutable updates, keeping your React components efficient.
 
-Fluent-state is local by default. You use it like `useState`, but get the power of a reactive store — with full React compatibility and no extra concepts to learn.
+**Q: Can I update nested state immutably without writing verbose code?**  
+A: Yes! `useFluentState` handles immutable updates under the hood, so you can write concise updates like `state.user.address.city("New City")`.
 
-This was born out of frustration, tested in the real world, and built with care. It’s not the flashiest, but it’s **clean, stable, and powerful.**
+**Q: How do effects know when to re-run?**  
+A: Effects track which state getters you call during execution. They only re-run when those specific values change.
 
----
-
-## 🛠 Installation
-
-```bash
-npm install fluent-state
-```
+**Q: Does this work with arrays?**  
+A: Absolutely. You can update arrays immutably and track changes as shown in the todo example.
 
 ---
 
-## 🧩 API Summary
+## 🛣 Roadmap
 
-```ts
-const [state, effect] = useFluentState(initialState);
-
-// Get value
-state.count(); // 0
-
-// Set value
-state.count(1);
-
-// Update with function
-state.count((prev) => prev + 1);
-
-// Nested
-state.user.address.city("Amsterdam");
-
-// Arrays
-state.items((arr) => [...arr, "new item"]);
-
-// Auto-tracked effect
-effect(() => {
-  console.log(state.count());
-});
-```
+- ✅ Fully working effect system with automatic dependency tracking
+- ✅ Support for deeply nested objects and arrays
+- ⏳ Derived/computed state (coming soon)
+- ⏳ Persist plugin for saving state to localStorage or similar
+- ⏳ Devtools integration for easier debugging
+- ⏳ Optional global/shared state support
+- ⏳ Performance optimizations and bug fixes
 
 ---
 
-## 🧪 No unnecessary re-renders
+## ⚠️ Stability & Testing
 
-Your component re-renders only when needed.  
-Your effects re-run only when the _actual values you use_ change.
+fluent-state is a stable and reliable library with a solid foundation.  
+While it currently lacks automated tests, it has been carefully designed and tested manually.
 
----
+Adding automated test coverage is on the roadmap to ensure ongoing quality and reliability.
 
-## 🚦 Best Practices for `useFluentState`
-
-- **Always use the getter function to read state:**  
-  Use `state.someValue()` instead of directly accessing properties. This ensures dependency tracking works correctly.
-
-- **Update state using the setter function:**  
-  Use `state.someValue(newValue)` or `state.someValue(prev => newValue)` to update state immutably and trigger reactivity.
-
-- **Leverage the cached proxy functions:**  
-  You can safely assign nested proxies to variables (e.g. `const todos = state.user.todos;`) and use them directly. The proxies are cached and stable.
-
-- **Use effects for side effects and reacting to state changes:**  
-  Use the provided `effect` function to run code when tracked state changes. No need for manual dependency arrays.
-
-- **Keep state as plain JavaScript objects and arrays:**  
-  The proxy system wraps your data but underneath, you still work with familiar JS structures, making it easy to reason about your data.
-
-- **Avoid mutating state directly:**  
-  Always update state through the proxy setter to maintain immutability and React compatibility.
-
-- **Plan for derived state with upcoming compute feature:**  
-  Currently, use effects to update related state, but soon you can use `compute` for automatic cached derived values.
-
-- **Designed specifically for React:**  
-  `useFluentState` integrates seamlessly with React’s rendering lifecycle, avoiding unnecessary re-renders and making state updates efficient.
+Contributions to help expand test coverage and improve robustness are very welcome!
 
 ---
 
-These practices help you get the most out of `useFluentState` while keeping your code clean, predictable, and performant.
+## 🤝 Contributing
 
-## 📦 Roadmap
-
-- ✅ Fully working effect system
-- ✅ Nested array/object support
-- ⏳ Derived/computed state
-- ⏳ Persist plugin
-- ⏳ Devtools
-- ⏳ Global/shared state opt-in
-
----
-
-## 🤝 Contributions welcome
-
-This is early but stable — and already powerful.
-
-If you have ideas, improvements, or want to help shape its future: jump in!
+Contributions, feedback, and ideas are welcome! Feel free to open issues or PRs.
 
 ---
 
@@ -227,10 +234,4 @@ MIT © Marcel Bos
 
 ---
 
-## 🙋‍♂️ Author
-
-Built by [Marcel Bos](https://github.com/marsbos)
-
-Follow for updates, thoughts & ideas.
-
----
+Built with care by [Marcel Bos](https://github.com/marsbos)
