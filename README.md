@@ -49,7 +49,9 @@ function Counter() {
 }
 ```
 
-[Try the live demo on CodeSandbox »](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
+⚡ [Live demo on CodeSandbox (state & effect) »](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
+
+⚡ [Live demo on StackBlitz (state, compute & effect) »](https://stackblitz.com/edit/vitejs-vite-uh4kyzkf?file=src%2FApp.tsx)
 
 ---
 
