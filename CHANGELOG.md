@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- `useFluentCompute`: derived state with auto dependency tracking.
+- `useFluentCompute`: computed state with auto dependency tracking.
 
 ---
 

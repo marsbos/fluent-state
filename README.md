@@ -51,6 +51,8 @@ function Counter() {
 
 [Try the live demo on CodeSandbox »](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
 
+### Computed state & effect demo coming soon...
+
 ---
 
 ## 💡 Why fluent-state?
