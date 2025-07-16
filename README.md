@@ -183,27 +183,6 @@ export default function () {
 
 ---
 
-## 🧩 Nested State Example
-
-```tsx
-const [state, effect] = useFluentState({
-  user: {
-    name: "Alice",
-    address: { city: "Amsterdam" },
-    hobbies: ["reading", "cycling"],
-  },
-});
-
-effect(() => {
-  console.log("City is:", state.user.address.city());
-});
-
-state.user.address.city("Rotterdam");
-state.user.hobbies((h) => [...h, "coding"]);
-```
-
----
-
 ## 🔍 Complex Example: Todo List with Nested State and Effects
 
 ```tsx
