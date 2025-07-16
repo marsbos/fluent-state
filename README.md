@@ -2,6 +2,14 @@
 
 > Fluent, immutable React local state that just makes sense.
 
+<p>
+  <img src="https://img.shields.io/npm/v/fluent-state.svg" alt="npm version" />
+  <img src="https://img.shields.io/npm/dw/fluent-state.svg" alt="npm downloads" />
+  <img src="https://img.shields.io/npm/l/fluent-state.svg" alt="license" />
+</p>
+
+> Fluent, immutable React local state that just makes sense.
+
 A tiny (~2kb), proxy-based React hook for **deeply nested**, reactive state and **built-in effects** — zero boilerplate, no reducers, no magic.
 
 ---

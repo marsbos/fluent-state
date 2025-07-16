@@ -1,7 +1,7 @@
 #!/bin/bash
 
 : <<'END_USAGE'
-./release.sh patch "fix: update README and remove dependency"
+./release.sh patch "fix: fix message here"
 ./release.sh minor "feat: add new feature"
 ./release.sh major "breaking: big rewrite"
 END_USAGE
