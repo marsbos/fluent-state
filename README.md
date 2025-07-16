@@ -256,34 +256,6 @@ This example shows how `useFluentState` manages deeply nested arrays and objects
 
 ---
 
-## 🔍 Example: Form Validation with `compute`
-
-```tsx
-const isFormValid = compute(() => {
-  return (
-    state.form.name().trim().length > 0 && state.form.email().includes("@")
-  );
-});
-
-return (
-  <>
-    <input
-      value={state.form.name()}
-      onChange={(e) => state.form.name(e.target.value)}
-      placeholder="Name"
-    />
-    <input
-      value={state.form.email()}
-      onChange={(e) => state.form.email(e.target.value)}
-      placeholder="Email"
-    />
-    <button disabled={!isFormValid()}>Submit</button>
-  </>
-);
-```
-
----
-
 ## ❓ FAQ
 
 **Q: Why do I need to call state fields as functions like `state.user.name()`?**  
