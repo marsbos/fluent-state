@@ -10,7 +10,7 @@
 
 > Fluent, immutable React local state that just makes sense.
 
-A tiny (~2kb), proxy-based React hook for **deeply nested**, reactive state and **built-in effects** — zero boilerplate, no reducers, no magic.
+A tiny (~2.4kb), proxy-based React hook for **deeply nested**, reactive state, **computed** reactive state and **built-in effects** — zero boilerplate, no reducers, no magic.
 
 ---
 
@@ -51,8 +51,6 @@ function Counter() {
 
 [Try the live demo on CodeSandbox »](https://codesandbox.io/s/charming-robinson-wzp5j6-wzp5j6)
 
-### Computed state & effect demo coming soon...
-
 ---
 
 ## 💡 Why fluent-state?
@@ -74,6 +72,7 @@ I built fluent-state because I wanted a React state hook that:
 - Immutable updates, fully React compatible
 - Auto-tracked effects with zero boilerplate
 - Works flawlessly with nested objects and arrays
+- **Reactive computed state with `compute` for derived values**
 - Tiny bundle size (~2kb)
 - Full TypeScript support with accurate typings
 
@@ -96,6 +95,91 @@ This means:
 - Effects track which getter functions you use — no manual dependency arrays needed
 
 In short: fluent-state’s proxies wrap **functions representing paths**, not the state object itself — keeping everything simple, predictable, and reactive.
+
+---
+
+## ⚙️ Computed State with `compute`
+
+Besides `effect` for side-effects, `fluent-state` also provides the `compute` function to create **derived, reactive state** that automatically updates whenever its underlying dependencies change.
+
+```tsx
+import { useFluentState } from "fluent-state";
+
+type Contact = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+type AppState = {
+  form: {
+    name: string;
+    email: string;
+  };
+  contacts: Contact[];
+};
+
+export default function () {
+  const [state, effect, compute] = useFluentState<AppState>({
+    form: { name: "", email: "" },
+    contacts: [
+      { id: 1, name: "Alice", email: "alice@example.com" },
+      { id: 2, name: "Bob", email: "bob@example.com" },
+    ],
+  });
+
+  effect(() => {
+    const contacts = state.contacts();
+    console.log("Contacts changed:", contacts);
+  });
+
+  const isFormValid = compute(() => {
+    const name: string = state.form.name();
+    const email: string = state.form.email();
+    return email.includes("@") && Boolean(name);
+  });
+
+  const handleAddContact = () => {
+    if (isFormValid()) {
+      const contacts = state.contacts;
+      const newId = contacts().length + 1;
+      contacts((prev) => [...prev, { id: newId, ...state.form() }]);
+      state.form({ email: "", name: "" });
+    }
+  };
+
+  return (
+    <div>
+      <h1>useFluentState - compute example</h1>
+
+      <input
+        value={state.form.name()}
+        onChange={(e) => state.form.name(e.target.value)}
+        placeholder="Enter name"
+      />
+      <input
+        value={state.form.email()}
+        onChange={(e) => state.form.email(e.target.value)}
+        placeholder="Enter email"
+      />
+      <button disabled={!isFormValid()} onClick={handleAddContact}>
+        Add contact
+      </button>
+
+      <ul>
+        {state.contacts().map((contact) => (
+          <li key={contact.id}>{contact.email}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+- `compute` automatically tracks which proxy getters you call
+- The computation re-runs whenever any of those dependencies change
+- It’s the ideal replacement for `useMemo` + `useEffect` combinations
+- `compute` returns a function you call to read the current computed value
 
 ---
 
@@ -193,6 +277,34 @@ This example shows how `useFluentState` manages deeply nested arrays and objects
 
 ---
 
+## 🔍 Example: Form Validation with `compute`
+
+```tsx
+const isFormValid = compute(() => {
+  return (
+    state.form.name().trim().length > 0 && state.form.email().includes("@")
+  );
+});
+
+return (
+  <>
+    <input
+      value={state.form.name()}
+      onChange={(e) => state.form.name(e.target.value)}
+      placeholder="Name"
+    />
+    <input
+      value={state.form.email()}
+      onChange={(e) => state.form.email(e.target.value)}
+      placeholder="Email"
+    />
+    <button disabled={!isFormValid()}>Submit</button>
+  </>
+);
+```
+
+---
+
 ## ❓ FAQ
 
 **Q: Why do I need to call state fields as functions like `state.user.name()`?**  
@@ -213,7 +325,7 @@ A: Absolutely. You can update arrays immutably and track changes as shown in the
 
 - ✅ Fully working effect system with automatic dependency tracking
 - ✅ Support for deeply nested objects and arrays
-- ⏳ Derived/computed state (coming soon)
+- ✅ Reactive computed state with `compute`
 - ⏳ Persist plugin for saving state to localStorage or similar
 - ⏳ Devtools integration for easier debugging
 - ⏳ Optional global/shared state support
